@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * @author Kingstu
+ * @author Kingstu111
  * @date 2022/6/21 20:04
  * @description
  */
