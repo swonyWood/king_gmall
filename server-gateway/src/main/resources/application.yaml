@@ -1,0 +1,21 @@
+server:
+  port: 80
+spring:
+  cloud:
+    sentinel:
+      enabled: true
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"  #允许所有来源访问
+            allowedMethods: "*"  #允许所有请求方式跨域访问
+            allowedHeaders: "*"  #运行任意请求头跨域
+            allowCredentials: true #运行cookie等一些安全头跨域
+
+      routes:
+        - id: product_route
+          uri: lb://service-product
+          predicates:
+            - Path=/admin/product/**
+
