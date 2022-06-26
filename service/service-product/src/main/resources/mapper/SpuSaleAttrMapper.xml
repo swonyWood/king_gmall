@@ -29,4 +29,25 @@
         left join spu_sale_attr_value ssav on ssa.spu_id=ssav.spu_id and ssa.base_sale_attr_id = ssav.base_sale_attr_id
         where ssa.spu_id=#{spuId}
     </select>
+    <select id="getSpuSaleAttrAndMarkSkuSaleValue" resultMap="SaleAttrNameAndValueResultMap">
+        SELECT
+            ssa.*,
+            ssav.id vid,
+            ssav.sale_attr_value_name,
+        IF
+            ( skuav.id IS NULL, "0", "1" ) is_checked
+        FROM
+            spu_sale_attr_value ssav
+            LEFT JOIN spu_sale_attr ssa ON ssa.spu_id = ssav.spu_id
+            AND ssa.base_sale_attr_id = ssav.base_sale_attr_id
+            LEFT JOIN sku_sale_attr_value skuav ON ssav.id = skuav.sale_attr_value_id
+            AND skuav.sku_id = #{skuId}
+        WHERE
+            ssav.spu_id = #{spuId}
+        ORDER BY
+            ssav.base_sale_attr_id,
+            ssav.id
+
+
+    </select>
 </mapper>

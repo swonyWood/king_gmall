@@ -14,8 +14,22 @@ spring:
             allowCredentials: true #运行cookie等一些安全头跨域
 
       routes:
+        - id: incr_test
+          uri: lb://service-product
+          predicates:
+            - Path=/incr
         - id: product_route
           uri: lb://service-product
           predicates:
             - Path=/admin/product/**
+
+        - id: activity_route
+          uri: lb://service-activity
+          predicates:
+            - Path=/admin/activity/**
+
+        - id: front_route
+          uri: lb://web-front
+          predicates:
+              - Host=**.gmall.com
 

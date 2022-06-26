@@ -7,6 +7,7 @@ import com.atguigu.gmall.model.product.SkuSaleAttrValue;
 import com.atguigu.gmall.product.service.SkuAttrValueService;
 import com.atguigu.gmall.product.service.SkuImageService;
 import com.atguigu.gmall.product.service.SkuSaleAttrValueService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gmall.product.service.SkuInfoService;
 import com.atguigu.gmall.product.mapper.SkuInfoMapper;
@@ -75,6 +76,14 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     public void cancelSale(Long skuId) {
         //TODO 连接es删除数据
         skuInfoMapper.updateSaleStatus(skuId,0);
+    }
+
+    @Override
+    public List<SkuInfo> findSkuInfoByKeyword(String keyword) {
+        QueryWrapper<SkuInfo> wrapper = new QueryWrapper<>();
+        wrapper.like("sku_name", keyword);
+        List<SkuInfo> list = list(wrapper);
+        return list;
     }
 }
 

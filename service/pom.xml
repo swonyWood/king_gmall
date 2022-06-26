@@ -13,6 +13,9 @@
     <packaging>pom</packaging>
     <modules>
         <module>service-product</module>
+        <module>service-activity</module>
+        <module>web-front</module>
+        <module>service-item</module>
     </modules>
 
     <dependencies>

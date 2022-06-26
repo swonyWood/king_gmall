@@ -3,6 +3,8 @@ package com.atguigu.gmall.product.service;
 import com.atguigu.gmall.model.product.SkuInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  *
  */
@@ -25,4 +27,11 @@ public interface SkuInfoService extends IService<SkuInfo> {
      * @param skuId
      */
     void cancelSale(Long skuId);
+
+    /**
+     * 根据关键字查询sku列表
+     * @param keyword
+     * @return
+     */
+    List<SkuInfo> findSkuInfoByKeyword(String keyword);
 }
