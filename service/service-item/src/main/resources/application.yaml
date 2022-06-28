@@ -1,0 +1,11 @@
+server:
+  port: 9000
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  main:
+    allow-bean-definition-overriding: true
+  redis:
+    host: 192.168.200.100
+    port: 6379
+    password: "!king123@"

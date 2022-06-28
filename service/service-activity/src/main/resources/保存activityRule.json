@@ -1,0 +1,18 @@
+{
+  "activityId": 1,
+  "activityRuleList": [
+    {
+      "activityId": 1,
+      "conditionAmount": "300",
+      "conditionNum": "",
+      "benefitAmount": "100",
+      "benefitDiscount": ""
+    }
+  ],
+  "activitySkuList": [
+    {
+      "skuId": 40
+    }
+  ],
+  "couponIdList": []
+}

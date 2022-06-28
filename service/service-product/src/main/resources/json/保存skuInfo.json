@@ -1,0 +1,87 @@
+{
+  "id": null,
+  "spuId": 28,
+  "price": "799",
+  "skuName": "诺基亚 NOKIA G50 5G 全网通 5000mAh电池高通骁龙 4800万超级夜景 6.82全面屏美颜拍照手机 6GB+128GB 海蓝",
+  "weight": "1",
+  "skuDesc": "1fasdfasd",
+  "category3Id": 61,
+  "skuAttrValueList": [
+    {
+      "attrId": "1",
+      "valueId": "2"
+    },
+    {
+      "attrId": "2",
+      "valueId": "8"
+    },
+    {
+      "attrId": "3",
+      "valueId": "20"
+    },
+    {
+      "attrId": "4",
+      "valueId": "27"
+    },
+    {
+      "attrId": "5",
+      "valueId": "34"
+    },
+    {
+      "attrId": "11",
+      "valueId": "78"
+    },
+    {
+      "attrId": "12",
+      "valueId": "80"
+    },
+    {
+      "attrId": "14",
+      "valueId": "81"
+    },
+    {
+      "attrId": "15",
+      "valueId": "83"
+    }
+  ],
+  "skuSaleAttrValueList": [],
+  "skuImageList": [
+    {
+      "spuImgId": 279,
+      "imgName": "4.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/39faba17e1944a1291b0a19671fc2dc8_4.png",
+      "isDefault": 1
+    },
+    {
+      "spuImgId": 280,
+      "imgName": "2.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/ca48df35909e4439b77535349d3f7980_2.png",
+      "isDefault": 0
+    },
+    {
+      "spuImgId": 281,
+      "imgName": "3.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/28f0e3bda6dd4500930b3290387ebf37_3.png",
+      "isDefault": 0
+    },
+    {
+      "spuImgId": 282,
+      "imgName": "1.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/29553cca3ad34abfa93019a247a320f2_1.png",
+      "isDefault": 0
+    },
+    {
+      "spuImgId": 283,
+      "imgName": "5.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/ff7bb5c0444d4d79aa3cc52267ec1ca5_5.png",
+      "isDefault": 0
+    }
+  ],
+  "skuDefaultImg": "http://192.168.200.100:9000/gmall/39faba17e1944a1291b0a19671fc2dc8_4.png",
+  "tmId": 13
+}
+
+//skuAttrValueList保存到sku_attr_value
+//skuSaleAttrValueList保存到sku_sale_attr_value
+//skuImageList保存到sku_image
+//基本信息保存到sku_info

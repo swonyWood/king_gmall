@@ -1,0 +1,79 @@
+{
+  "id": null,
+  "spuName": "诺基亚20plus 超拉风",
+  "description": "1111",
+  "category3Id": 61,
+  "spuImageList": [
+    {
+      "imgName": "4.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/39faba17e1944a1291b0a19671fc2dc8_4.png"
+    },
+    {
+      "imgName": "2.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/ca48df35909e4439b77535349d3f7980_2.png"
+    },
+    {
+      "imgName": "3.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/28f0e3bda6dd4500930b3290387ebf37_3.png"
+    },
+    {
+      "imgName": "1.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/29553cca3ad34abfa93019a247a320f2_1.png"
+    },
+    {
+      "imgName": "5.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/ff7bb5c0444d4d79aa3cc52267ec1ca5_5.png"
+    },
+    {
+      "imgName": "1.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/3d40a2e4c0f244528d9b8f0db7a6f1fb_1.png"
+    },
+    {
+      "imgName": "5.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/c02b23a1100e4f9193816ce30937550a_5.png"
+    },
+    {
+      "imgName": "3.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/0093a20c90534f0da421175ff9309015_3.png"
+    },
+    {
+      "imgName": "2.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/6067c786f8134102aa37c5f44e37fa58_2.png"
+    },
+    {
+      "imgName": "4.png",
+      "imgUrl": "http://192.168.200.100:9000/gmall/2441f3978e1c450bb5ee1c4f247ff541_4.png"
+    }
+  ],
+  "spuSaleAttrList": [
+    {
+      "baseSaleAttrId": "1",
+      "saleAttrName": "选择颜色",
+      "spuSaleAttrValueList": [
+        {
+          "baseSaleAttrId": "1",
+          "saleAttrValueName": "蓝色"
+        },
+        {
+          "baseSaleAttrId": "1",
+          "saleAttrValueName": "仙女"
+        }
+      ]
+    },
+    {
+      "baseSaleAttrId": "2",
+      "saleAttrName": "选择版本",
+      "spuSaleAttrValueList": [
+        {
+          "baseSaleAttrId": "2",
+          "saleAttrValueName": "8+128"
+        },
+        {
+          "baseSaleAttrId": "2",
+          "saleAttrValueName": "12+256"
+        }
+      ]
+    }
+  ],
+  "tmId": 13
+}
