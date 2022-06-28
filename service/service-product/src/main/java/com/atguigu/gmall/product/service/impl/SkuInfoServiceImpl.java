@@ -1,5 +1,6 @@
 package com.atguigu.gmall.product.service.impl;
 
+import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.model.product.SkuAttrValue;
 import com.atguigu.gmall.model.product.SkuImage;
 import com.atguigu.gmall.model.product.SkuInfo;
@@ -13,10 +14,13 @@ import com.atguigu.gmall.product.service.SkuInfoService;
 import com.atguigu.gmall.product.mapper.SkuInfoMapper;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBloomFilter;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -36,6 +40,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     SkuSaleAttrValueService skuSaleAttrValueService;
     @Autowired
     SkuInfoMapper skuInfoMapper;
+    @Autowired
+    RedissonClient redissonClient;
     @Transactional
     @Override
     public void saveSkuInfo(SkuInfo skuInfo) {
@@ -64,6 +70,10 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
         skuSaleAttrValueService.saveBatch(saleAttrValues);
         log.info("sku信息保存完成,生成的skuId: {}",id);
 
+        //添到布隆
+        RBloomFilter<Object> filter = redissonClient.getBloomFilter(RedisConst.SKU_BLOOM_FILTER_NAME);
+        filter.add(skuInfo.getId());
+
     }
 
     @Override
@@ -84,6 +94,17 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
         wrapper.like("sku_name", keyword);
         List<SkuInfo> list = list(wrapper);
         return list;
+    }
+
+    @Override
+    public BigDecimal getSkuPrice(Long skuId) {
+
+        return skuInfoMapper.getSkuPrice(skuId);
+    }
+
+    @Override
+    public List<Long> getSkuIds() {
+        return skuInfoMapper.getSkuIds();
     }
 }
 

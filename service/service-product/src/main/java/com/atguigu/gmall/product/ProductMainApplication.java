@@ -1,10 +1,12 @@
 package com.atguigu.gmall.product;
 
+import com.atguigu.gmall.common.config.RedissonConfiguration;
 import com.atguigu.gmall.common.config.Swagger2Config;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.context.annotation.Import;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -12,8 +14,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @date 2022/6/20 19:34
  * @description
  */
+@EnableScheduling //开启定时调度
 @EnableTransactionManagement
-@Import(Swagger2Config.class)
+@Import({Swagger2Config.class, RedissonConfiguration.class})
 @MapperScan(basePackages = "com.atguigu.gmall.product.mapper")
 @SpringCloudApplication
 public class ProductMainApplication {
