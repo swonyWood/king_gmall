@@ -1,6 +1,6 @@
-package com.atguigu.gmall.item.component;
+package com.atguigu.gmall.starter.cache.component;
 
-import com.atguigu.gmall.model.vo.SkuDetailVo;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +16,15 @@ public interface CacheService {
      * @return
      */
     <T> T getData(String cacheKey, Class<T> t);
+
+    /**
+     * 从缓存中获取数据,复杂类型
+     * @param cacheKey
+     * @param t
+     * @param <T>
+     * @return
+     */
+    <T> T getData(String cacheKey, TypeReference<T> t);
 
     /**
      * 给缓存保存一个数据

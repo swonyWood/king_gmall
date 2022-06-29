@@ -48,4 +48,10 @@ public interface SkuInfoService extends IService<SkuInfo> {
      * @return
      */
     List<Long> getSkuIds();
+
+    /**
+     * 修改skuInfo
+     * @param skuInfo
+     */
+    void updateSkuInfo(SkuInfo skuInfo);
 }

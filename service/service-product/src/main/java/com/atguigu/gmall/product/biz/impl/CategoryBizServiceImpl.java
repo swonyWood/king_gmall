@@ -2,12 +2,12 @@ package com.atguigu.gmall.product.biz.impl;
 
 
 
+import com.atguigu.gmall.starter.cache.annotation.Cache;
 import com.atguigu.gmall.common.util.JSONs;
 import com.atguigu.gmall.model.vo.CategoryVo;
 import com.atguigu.gmall.product.biz.CategoryBizService;
 import com.atguigu.gmall.product.mapper.BaseCategory1Mapper;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -28,6 +28,7 @@ public class CategoryBizServiceImpl implements CategoryBizService {
     @Autowired
     StringRedisTemplate redisTemplate;
 
+    @Cache(key="categorys")
     @Override
     public List<CategoryVo> getCategorys() {
         return category1Mapper.getCategorys();

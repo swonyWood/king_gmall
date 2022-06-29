@@ -6,7 +6,8 @@ import java.util.concurrent.TimeUnit;
 import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.feign.product.SkuFeignClient;
-import com.atguigu.gmall.item.component.CacheService;
+import com.atguigu.gmall.starter.cache.annotation.Cache;
+import com.atguigu.gmall.starter.cache.component.CacheService;
 import com.atguigu.gmall.model.product.SkuInfo;
 
 import com.atguigu.gmall.item.service.ItemService;
@@ -37,8 +38,18 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     CacheService cacheService;
 
+
+    @Cache(key=RedisConst.SKU_INFO_CACHE_KEY_PREFIX+"#{#params[0]}",
+            bloomName= RedisConst.SKU_BLOOM_FILTER_NAME,
+            bloomIf = "#{#params[0]}",
+            tll = RedisConst.SKU_INFO_CACHE_TIMEOUT
+    )
     @Override
     public SkuDetailVo getItemDetail(Long skuId) {
+        return getItemDetailFromRpc(skuId);
+    }
+
+    public SkuDetailVo getItemDetailRedissonLockBloom(Long skuId) {
         //1.先查缓存
         String cacheKey = RedisConst.SKU_INFO_CACHE_KEY_PREFIX+skuId;
         SkuDetailVo data = cacheService.getData(cacheKey,SkuDetailVo.class);
@@ -167,4 +178,5 @@ public class ItemServiceImpl implements ItemService {
 
         return vo;
     }
+
 }
