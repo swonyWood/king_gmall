@@ -14,6 +14,8 @@ spring:
     host: 192.168.200.100
     port: 6379
     password: "!king123@"
+  profiles:
+    include: sharding
 app:
   minio:
     endpoint: http://192.168.200.100:9000
