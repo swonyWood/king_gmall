@@ -1,5 +1,6 @@
 package com.atguigu.gmall.product.mapper;
 
+import com.atguigu.gmall.model.list.Goods;
 import com.atguigu.gmall.model.product.SkuInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,6 +32,13 @@ public interface SkuInfoMapper extends BaseMapper<SkuInfo> {
      * @return
      */
     List<Long> getSkuIds();
+
+    /**
+     * 根据skuId查询货物信息
+     * @param skuId
+     * @return
+     */
+    Goods getGoodsInfoBySkuId(@Param("skuId") Long skuId);
 }
 
 

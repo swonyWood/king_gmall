@@ -1,6 +1,8 @@
 package com.atguigu.gmall.product.service.impl;
 
 import com.atguigu.gmall.common.constant.RedisConst;
+import com.atguigu.gmall.feign.search.SearchFeignClient;
+import com.atguigu.gmall.model.list.Goods;
 import com.atguigu.gmall.model.product.SkuAttrValue;
 import com.atguigu.gmall.model.product.SkuImage;
 import com.atguigu.gmall.model.product.SkuInfo;
@@ -48,6 +50,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     RedissonClient redissonClient;
     @Autowired
     StringRedisTemplate redisTemplate;
+    @Autowired
+    SearchFeignClient searchFeignClient;
 
     ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
 
@@ -65,6 +69,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
                 10, TimeUnit.SECONDS);
         //兜底,数据有过期时间
     }
+
+
 
     @Transactional
     @Override
@@ -102,14 +108,20 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
 
     @Override
     public void onsale(Long skuId) {
-        //TODO 连接es保存数据
+        //1.数据库修改状态
         skuInfoMapper.updateSaleStatus(skuId,1);
+        //2.数据保存到es中
+        Goods goods = this.getGoodsInfoBySkuId(skuId);
+        //3.远程调用检索服务上架
+        searchFeignClient.upGoods(goods);
     }
 
     @Override
     public void cancelSale(Long skuId) {
-        //TODO 连接es删除数据
+        //1.数据库修改状态
         skuInfoMapper.updateSaleStatus(skuId,0);
+        //2.远程调用检索服务下架
+        searchFeignClient.downGoods(skuId);
     }
 
     @Override
@@ -129,6 +141,12 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     @Override
     public List<Long> getSkuIds() {
         return skuInfoMapper.getSkuIds();
+    }
+
+    @Override
+    public Goods getGoodsInfoBySkuId(Long skuId) {
+        Goods goods = skuInfoMapper.getGoodsInfoBySkuId(skuId);
+        return goods;
     }
 }
 
