@@ -25,12 +25,11 @@ public class SearchController {
     @GetMapping("/list.html")
     public String listPage(SearchParam param, Model model){
 
-        //TODO 检索
         Result<Map<String,Object>> search = searchFeignClient.search(param);
 
         Map<String, Object> data = search.getData();
 
-        model.addAttribute(data);
+        model.addAllAttributes(data);
         return "list/index";
     }
 }

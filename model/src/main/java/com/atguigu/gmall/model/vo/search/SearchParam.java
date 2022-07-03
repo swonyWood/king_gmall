@@ -24,7 +24,7 @@ public class SearchParam {
     private String trademark;
     private String order;
     private String[] props;
-    private Long pageNo;
+    private Long pageNo=1L;
 
 
 }

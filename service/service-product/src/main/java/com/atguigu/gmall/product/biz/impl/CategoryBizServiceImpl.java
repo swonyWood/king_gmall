@@ -55,7 +55,6 @@ public class CategoryBizServiceImpl implements CategoryBizService {
                 }
             }
 
-            //TODO 把以下逻辑加到上锁代码中
             List<CategoryVo> list = category1Mapper.getCategorys();
             //4. 放到缓存,无论数据库有没有数据都放缓存
             if(list==null){
