@@ -8,6 +8,7 @@ import com.atguigu.gmall.search.service.GoodsSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
 /**
@@ -28,7 +29,7 @@ public class SearchController {
      * @return
      */
     @PostMapping("/goods")
-    public Result<SearchResponseVo> search(@RequestBody SearchParam Param){
+    public Result<SearchResponseVo> search(@RequestBody SearchParam Param, HttpServletRequest request){
 
         //检索
         SearchResponseVo vo = searchService.search(Param);

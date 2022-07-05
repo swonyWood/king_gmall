@@ -21,11 +21,11 @@ public interface SearchFeignClient {
 
     /**
      * 商品检索
-     * @param searchParam
+     * @param
      * @return
      */
     @PostMapping("/goods")
-    Result<Map<String,Object>> search(@RequestBody SearchParam searchParam);
+    Result<Map<String,Object>> search(@RequestBody SearchParam param);
 
     /**
      * 将商品保存到es

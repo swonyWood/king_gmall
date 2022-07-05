@@ -1,6 +1,7 @@
 package com.atguigu.gmall.product.rpc;
 
 import com.atguigu.gmall.common.result.Result;
+import com.atguigu.gmall.model.cart.CartInfo;
 import com.atguigu.gmall.model.dto.CategoryViewDo;
 import com.atguigu.gmall.model.product.SkuInfo;
 import com.atguigu.gmall.model.product.SpuSaleAttr;
@@ -35,6 +36,18 @@ public class SkuRpcController {
 
     @Autowired
     Spu2SkuSaleAttrBizService spu2SkuSaleAttrBizService;
+
+
+    /**
+     * 查指定skuId商品,并封装成cartInfo
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/cartinfo/{skuId}")
+    public Result<CartInfo> getCartInfoBySkuId(@PathVariable("skuId") Long skuId){
+        CartInfo info = skuInfoService.getCartInfoBySkuId(skuId);
+        return Result.ok(info);
+    }
 
     /**
      * 查询skuInfo

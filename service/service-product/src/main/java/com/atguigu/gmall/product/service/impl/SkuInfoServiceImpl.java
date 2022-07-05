@@ -1,7 +1,12 @@
 package com.atguigu.gmall.product.service.impl;
+import com.atguigu.gmall.common.util.AuthContextHolder;
+import com.atguigu.gmall.model.vo.user.UserAuth;
+import com.google.common.collect.Lists;
+import java.sql.Timestamp;
 
 import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.feign.search.SearchFeignClient;
+import com.atguigu.gmall.model.cart.CartInfo;
 import com.atguigu.gmall.model.list.Goods;
 import com.atguigu.gmall.model.product.SkuAttrValue;
 import com.atguigu.gmall.model.product.SkuImage;
@@ -24,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -147,6 +153,47 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     public Goods getGoodsInfoBySkuId(Long skuId) {
         Goods goods = skuInfoMapper.getGoodsInfoBySkuId(skuId);
         return goods;
+    }
+
+    @Override
+    public CartInfo getCartInfoBySkuId(Long skuId) {
+        //
+        CartInfo cartInfo = new CartInfo();
+
+        UserAuth auth = AuthContextHolder.getUserAuth();
+        if (auth.getUserId()!= null) {
+            //登录了
+            cartInfo.setUserId(auth.getUserId().toString());
+        }else {
+            //没登录
+            cartInfo.setUserId(auth.getTempId());
+        }
+
+
+        cartInfo.setSkuId(skuId);
+        cartInfo.setId(skuId);
+        //查价格
+        BigDecimal price = skuInfoMapper.getSkuPrice(skuId);
+        cartInfo.setCartPrice(price);
+
+
+        cartInfo.setSkuNum(null);
+
+        SkuInfo info = skuInfoMapper.selectById(skuId);
+        cartInfo.setImgUrl(info.getSkuDefaultImg());
+        cartInfo.setSkuName(info.getSkuName());
+        cartInfo.setIsChecked(1);
+
+        cartInfo.setCreateTime(new Date());
+        cartInfo.setUpdateTime(new Date());
+
+
+        cartInfo.setSkuPrice(price);
+        cartInfo.setCouponInfoList(null);
+
+
+
+        return cartInfo;
     }
 }
 
