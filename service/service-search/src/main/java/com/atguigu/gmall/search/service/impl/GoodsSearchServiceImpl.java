@@ -1,17 +1,12 @@
 package com.atguigu.gmall.search.service.impl;
 import com.atguigu.gmall.model.vo.search.*;
-import com.google.common.collect.Lists;
 
 import com.atguigu.gmall.model.list.Goods;
 import com.atguigu.gmall.search.repo.GoodsRepository;
 import com.atguigu.gmall.search.service.GoodsSearchService;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.aggregations.Aggregation;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.nested.ParsedNested;
@@ -20,21 +15,22 @@ import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
+import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,6 +67,28 @@ public class GoodsSearchServiceImpl implements GoodsSearchService {
         //3.把命中记录封装成vo
         SearchResponseVo vo = buildResponse(goods,param);
         return vo;
+    }
+
+    @Override
+    public void incrHotScore(Long skuId, Long score) {
+
+        //UpdateQuery query, IndexCoordinates index
+        UpdateQuery query = buildHotScoreUpdateQuery(skuId,score);
+        esTemplate.update(query, IndexCoordinates.of("goods"));
+    }
+
+    private UpdateQuery buildHotScoreUpdateQuery(Long skuId, Long score) {
+
+        //1.拿到builder
+        UpdateQuery.Builder builder = UpdateQuery.builder(skuId + "");
+        //2.
+        HashMap<String,Long> map = new HashMap<>();
+        map.put("hotScore", score);
+        //TODO 优化
+        builder.withDocument(Document.from(map))
+                .withDocAsUpsert(true);
+
+        return builder.build();
     }
 
     /**
@@ -172,7 +190,7 @@ public class GoodsSearchServiceImpl implements GoodsSearchService {
         //回显orderMap
         String order = param.getOrder();
         OrderMap orderMap = new OrderMap();
-        if (!StringUtils.isEmpty(order)) {
+        if (!StringUtils.isEmpty(order) && !"null".equals(order)) {
             orderMap.setType(order.split(":")[0]);
             orderMap.setSort(order.split(":")[1]);
         }
@@ -320,8 +338,6 @@ public class GoodsSearchServiceImpl implements GoodsSearchService {
         attrIdAgg.subAggregation(attrValueAgg);
         attrAgg.subAggregation(attrIdAgg);
         dsl.addAggregation(attrAgg);
-
-
         return dsl;
     }
 }

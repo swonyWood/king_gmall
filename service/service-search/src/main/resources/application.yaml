@@ -1,5 +1,5 @@
 server:
-  port:
+  port: 11000
 spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration

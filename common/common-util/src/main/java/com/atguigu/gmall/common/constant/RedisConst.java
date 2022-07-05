@@ -10,4 +10,6 @@ public class RedisConst {
     public static final long SKU_INFO_CACHE_TIMEOUT = 1000*60*60*24*7L;
     public static final String SKU_BLOOM_FILTER_NAME = "boolm:skuid";
     public static final String LOCK_PREFIX = "lock:";
+    public static final String SKU_HOTSCORE = "hotscore:";
+    public static final String USER_LOGIN_PREFIX = "user:login:";
 }

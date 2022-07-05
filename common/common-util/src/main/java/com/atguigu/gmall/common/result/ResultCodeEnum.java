@@ -16,6 +16,8 @@ public enum ResultCodeEnum {
     PAY_RUN(205, "支付中"),
 
     LOGIN_AUTH(208, "未登陆"),
+    NOAUTH_URL(2080, "非法的路径,已追踪"),
+    LOGIN_FAIL(2081, "登陆失败,请填写正确的账号密码"),
     PERMISSION(209, "没有权限"),
     SECKILL_NO_START(210, "秒杀还没开始"),
     SECKILL_RUN(211, "正在排队中"),

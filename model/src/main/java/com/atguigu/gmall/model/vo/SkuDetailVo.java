@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 public class SkuDetailVo {
 
-    //sku对应的三级分类
+       //sku对应的三级分类
     private CategoryView categoryView;
     //sku信息
     private SkuInfo skuInfo;

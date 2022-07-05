@@ -2,11 +2,14 @@ package com.atguigu.gmall.item.service.impl;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.feign.product.SkuFeignClient;
+import com.atguigu.gmall.feign.search.SearchFeignClient;
+import com.atguigu.gmall.item.config.AppThreadPoolConfiguration;
 import com.atguigu.gmall.starter.cache.annotation.Cache;
 import com.atguigu.gmall.starter.cache.component.CacheService;
 import com.atguigu.gmall.model.product.SkuInfo;
@@ -40,6 +43,12 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     CacheService cacheService;
 
+    @Autowired
+    SearchFeignClient searchFeignClient;
+
+    @Autowired
+    ThreadPoolExecutor threadPoolExecutor;
+
 
     @Cache(key=RedisConst.SKU_INFO_CACHE_KEY_PREFIX+"#{#params[0]}",
             bloomName= RedisConst.SKU_BLOOM_FILTER_NAME,
@@ -49,6 +58,22 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public SkuDetailVo getItemDetail(Long skuId) {
         return getItemDetailFromRpc(skuId);
+    }
+
+    @Override
+    public void incrHotScore(Long skuId) {
+
+        Long increment = redisTemplate.opsForValue().increment(RedisConst.SKU_HOTSCORE + skuId);
+
+        if (increment % 100==0) {
+            //减少更新频率
+            CompletableFuture.runAsync(()->{
+                searchFeignClient.incrHotScore(skuId,increment);
+            },threadPoolExecutor);
+
+        }
+
+
     }
 
     public SkuDetailVo getItemDetailRedissonLockBloom(Long skuId) {

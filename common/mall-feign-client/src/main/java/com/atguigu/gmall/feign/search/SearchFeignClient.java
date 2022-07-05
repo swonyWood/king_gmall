@@ -7,6 +7,7 @@ import com.atguigu.gmall.model.vo.search.SearchResponseVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.Map;
 
 /**
@@ -41,4 +42,13 @@ public interface SearchFeignClient {
      */
     @GetMapping("/down/{skuId}")
     Result downGoods(@PathVariable("skuId")Long skuId);
+
+    /**
+     * 增加商品热度分
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/incr/hotscore/{skuId}")
+    Result incrHotScore(@PathVariable("skuId")Long skuId,
+                        @RequestParam("score") Long score);
 }

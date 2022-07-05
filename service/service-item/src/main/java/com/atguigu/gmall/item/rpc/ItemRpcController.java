@@ -1,6 +1,7 @@
 package com.atguigu.gmall.item.rpc;
 
 import com.atguigu.gmall.common.result.Result;
+import com.atguigu.gmall.feign.search.SearchFeignClient;
 import com.atguigu.gmall.item.service.ItemService;
 import com.atguigu.gmall.model.vo.SkuDetailVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ public class ItemRpcController {
     @Autowired
     ItemService itemService;
 
+
     /**
      * 获取商品详情
      * @param skuId
@@ -27,7 +29,10 @@ public class ItemRpcController {
      */
     @GetMapping("/sku/{skuId}")
     public Result<SkuDetailVo> getSkuDetail(@PathVariable("skuId")Long skuId) {
+        //1.查询详情
         SkuDetailVo skuDetailVo = itemService.getItemDetail(skuId);
+        //2.增加热度分
+        itemService.incrHotScore(skuId);
         return Result.ok(skuDetailVo);
     }
 

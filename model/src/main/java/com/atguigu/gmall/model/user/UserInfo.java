@@ -45,4 +45,7 @@ public class UserInfo extends BaseEntity {
     @TableField("user_level")
     private String userLevel;
 
+    //当时登录的ip
+    @TableField(exist = false)//表中不存在
+    private String loginIp;
 }

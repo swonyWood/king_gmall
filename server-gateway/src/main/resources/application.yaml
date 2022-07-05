@@ -14,10 +14,16 @@ spring:
             allowCredentials: true #运行cookie等一些安全头跨域
 
       routes:
+        - id: user_route
+          uri: lb://service-user
+          predicates:
+            - Path=/api/user/**
+
         - id: incr_test
           uri: lb://service-product
           predicates:
             - Path=/incr
+
         - id: product_route
           uri: lb://service-product
           predicates:
@@ -32,4 +38,10 @@ spring:
           uri: lb://web-front
           predicates:
               - Host=**.gmall.com
-
+app:
+  auth:
+    login-url:
+      - /order/**
+    no-auth-url:
+      - /rpc/inner/**
+    login-page: http://passport.gmall.com/login.html
