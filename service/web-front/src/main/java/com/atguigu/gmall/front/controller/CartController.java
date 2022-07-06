@@ -6,6 +6,7 @@ import com.atguigu.gmall.model.vo.cart.AddSuccessVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -23,10 +24,8 @@ public class CartController {
     @Autowired
     CartFeignClient cartFeignClient;
 
-//    public static Map<Thread,HttpServletRequest> threadLocal = new HashMap<>();
-
     /**
-     * 添加商品到购物车
+     * 跳转添加成功页面
      * @param skuId
      * @param skuNum
      * @return
@@ -35,9 +34,6 @@ public class CartController {
     public String addCart(@RequestParam("skuId") Long skuId,
                           @RequestParam("skuNum") Integer skuNum,
                           Model model) {
-
-
-
 
         //有放
 //        threadLocal.put(Thread.currentThread(), request);
@@ -50,4 +46,44 @@ public class CartController {
 //        threadLocal.remove(Thread.currentThread());
         return "cart/addCart";
     }
+
+    /**
+     * 跳转购物车列表
+     * @return
+     */
+    @GetMapping("/cart.html")
+    public String cartList(){
+
+        return "cart/index";
+    }
+
+    /**
+     * 删除选中商品跳转
+     * @return
+     */
+    @GetMapping("/cart/deleteChecked")
+    public String deleteChecked(){
+
+        cartFeignClient.deleteChecked();
+
+        return "cart/index";
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

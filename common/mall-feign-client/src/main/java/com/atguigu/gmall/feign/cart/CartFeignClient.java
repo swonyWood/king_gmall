@@ -25,6 +25,12 @@ public interface CartFeignClient {
                                       @RequestParam("num") Integer num);
 
 
+    /**
+     * 删除选中的商品
+     * @return
+     */
+    @GetMapping("/delete/checked")
+    Result deleteChecked();
 
 
 }

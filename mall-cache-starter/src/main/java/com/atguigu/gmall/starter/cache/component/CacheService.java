@@ -43,4 +43,10 @@ public interface CacheService {
      * @param <T>
      */
     <T> void saveData(String cacheKey, T detail, Long time, TimeUnit unit);
+
+    /**
+     * 延迟双删
+     * @param s
+     */
+    void delayDoubleDelete(String s);
 }

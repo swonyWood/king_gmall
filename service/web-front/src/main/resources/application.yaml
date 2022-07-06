@@ -8,3 +8,12 @@ spring:
     suffix: .html
   main:
     allow-bean-definition-overriding: true
+
+##配置feignClient
+#feign:
+#  client:
+#    config:
+#      default:
+#        connectTimeout: 1000
+#        readTimeout: 5000
+#        retryer: com.atguigu.gmall.common.retry.RequestNeverRetryer

@@ -1,12 +1,15 @@
 package com.atguigu.gmall.product.controller;
 
+import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.model.product.SkuInfo;
 import com.atguigu.gmall.product.service.SkuInfoService;
+import com.atguigu.gmall.starter.cache.component.CacheService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -24,6 +27,9 @@ public class SkuController {
 
     @Autowired
     SkuInfoService skuInfoService;
+
+    @Autowired
+    CacheService cacheService;
 
     /**
      * 保存skuInfo
@@ -80,5 +86,21 @@ public class SkuController {
     public List<SkuInfo> findSkuInfoByKeyword(@PathVariable("keyword")String keyword){
         List<SkuInfo> list =  skuInfoService.findSkuInfoByKeyword(keyword);
         return list;
+    }
+
+
+    /**
+     * 改价格
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/change/price/{skuId}")
+    public Result changePrice(@PathVariable("skuId")Long skuId, BigDecimal price){
+//        skuInfoService.cancelSale(skuId);
+
+        //延迟双删
+        cacheService.delayDoubleDelete(RedisConst.SKU_PRICE_CACHE_PREFIX+skuId);
+
+        return Result.ok();
     }
 }

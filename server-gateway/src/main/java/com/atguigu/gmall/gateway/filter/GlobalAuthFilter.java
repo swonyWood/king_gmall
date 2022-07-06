@@ -156,7 +156,7 @@ public class GlobalAuthFilter implements GlobalFilter {
             }
         }else{
             //2.没有再去看token
-            userTempId = request.getHeaders().getFirst("token");
+            userTempId = request.getHeaders().getFirst("userTempId");
         }
         return userTempId;
     }

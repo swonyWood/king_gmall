@@ -1,7 +1,10 @@
 package com.atguigu.gmall.product.service.impl;
+
 import com.atguigu.gmall.common.util.AuthContextHolder;
 import com.atguigu.gmall.model.vo.user.UserAuth;
+import com.atguigu.gmall.starter.cache.annotation.Cache;
 import com.google.common.collect.Lists;
+
 import java.sql.Timestamp;
 
 import com.atguigu.gmall.common.constant.RedisConst;
@@ -42,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
-    implements SkuInfoService{
+        implements SkuInfoService {
 
     @Autowired
     SkuImageService skuImageService;
@@ -62,26 +65,25 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     ScheduledExecutorService threadPool = Executors.newScheduledThreadPool(4);
 
     @Override
-    public void updateSkuInfo(SkuInfo skuInfo){
+    public void updateSkuInfo(SkuInfo skuInfo) {
         //1.改数据库
 
         //2.双删缓存
         //1)立即删 80%都ok
-        redisTemplate.delete(RedisConst.SKU_INFO_CACHE_KEY_PREFIX+skuInfo.getId());
+        redisTemplate.delete(RedisConst.SKU_INFO_CACHE_KEY_PREFIX + skuInfo.getId());
         //2)延迟删 99.99%都ok
         //拿到一个延时任务的线程池
 
-        threadPool.schedule(()->redisTemplate.delete(RedisConst.SKU_INFO_CACHE_KEY_PREFIX+skuInfo.getId()),
+        threadPool.schedule(() -> redisTemplate.delete(RedisConst.SKU_INFO_CACHE_KEY_PREFIX + skuInfo.getId()),
                 10, TimeUnit.SECONDS);
         //兜底,数据有过期时间
     }
 
 
-
     @Transactional
     @Override
     public void saveSkuInfo(SkuInfo skuInfo) {
-        log.info("sku信息正在保存:{}",skuInfo);
+        log.info("sku信息正在保存:{}", skuInfo);
         //1.包括skuInfo基本信息
         save(skuInfo);
         Long id = skuInfo.getId();
@@ -104,7 +106,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
             saleAttrValue.setSpuId(skuInfo.getSpuId());
         }
         skuSaleAttrValueService.saveBatch(saleAttrValues);
-        log.info("sku信息保存完成,生成的skuId: {}",id);
+        log.info("sku信息保存完成,生成的skuId: {}", id);
 
         //添到布隆
         RBloomFilter<Object> filter = redissonClient.getBloomFilter(RedisConst.SKU_BLOOM_FILTER_NAME);
@@ -115,7 +117,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     @Override
     public void onsale(Long skuId) {
         //1.数据库修改状态
-        skuInfoMapper.updateSaleStatus(skuId,1);
+        skuInfoMapper.updateSaleStatus(skuId, 1);
         //2.数据保存到es中
         Goods goods = this.getGoodsInfoBySkuId(skuId);
         //3.远程调用检索服务上架
@@ -125,7 +127,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     @Override
     public void cancelSale(Long skuId) {
         //1.数据库修改状态
-        skuInfoMapper.updateSaleStatus(skuId,0);
+        skuInfoMapper.updateSaleStatus(skuId, 0);
         //2.远程调用检索服务下架
         searchFeignClient.downGoods(skuId);
     }
@@ -138,6 +140,9 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
         return list;
     }
 
+    @Cache(key = RedisConst.SKU_PRICE_CACHE_PREFIX + "#{#params[0]}",
+            bloomName = RedisConst.SKU_BLOOM_FILTER_NAME,
+            bloomIf = "#{#params[0]}")
     @Override
     public BigDecimal getSkuPrice(Long skuId) {
 
@@ -161,10 +166,10 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
         CartInfo cartInfo = new CartInfo();
 
         UserAuth auth = AuthContextHolder.getUserAuth();
-        if (auth.getUserId()!= null) {
+        if (auth.getUserId() != null) {
             //登录了
             cartInfo.setUserId(auth.getUserId().toString());
-        }else {
+        } else {
             //没登录
             cartInfo.setUserId(auth.getTempId());
         }
@@ -192,8 +197,13 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
         cartInfo.setCouponInfoList(null);
 
 
-
         return cartInfo;
+    }
+
+    @Override
+    public BigDecimal get1010SkuPrice(Long skuId) {
+
+        return skuInfoMapper.getSkuPrice(skuId);
     }
 }
 

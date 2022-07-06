@@ -3,6 +3,8 @@ package com.atguigu.gmall.cart.service;
 import com.atguigu.gmall.model.cart.CartInfo;
 import com.atguigu.gmall.model.vo.cart.AddSuccessVo;
 
+import java.util.List;
+
 /**
  * @author Kingstu
  * @date 2022/7/5 13:29
@@ -46,4 +48,47 @@ public interface CartService {
      * @return
      */
     CartInfo getCartInfoFromRpc(Long skuId);
+
+    /**
+     * 查出当前购物车
+     * @return
+     */
+    List<CartInfo> getCartAllItem();
+
+    /**
+     * 查出指定购物列表
+     * @param cartKey
+     * @return
+     */
+    List<CartInfo> getCartAllItem(String cartKey);
+
+    /**
+     * 修改商品状态
+     * @param skuId
+     * @param status
+     */
+    void updateCartItemStatus(Long skuId, Integer status);
+
+    /**
+     * 删除选中的商品
+     */
+    void deleteChecked();
+
+    /**
+     * 拿到所有选中的商品
+     * @param cartKey
+     * @return
+     */
+    List<CartInfo> getAllCheckedItem(String cartKey);
+
+    /**
+     * 删除购物车指定商品
+     * @param skuId
+     */
+    void deleteCartItem(Long skuId);
+
+    /**
+     * 设置临时购物车的过期时间
+     */
+    void setTempCartExpire();
 }

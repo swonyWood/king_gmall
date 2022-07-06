@@ -116,4 +116,16 @@ public class SkuRpcController {
         BigDecimal price = skuInfoService.getSkuPrice(skuId);
         return Result.ok(price);
     }
+
+    /**
+     * 实时查价
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/sku/price/shishi/{skuId}")
+    public Result<BigDecimal> get1010SkuPrice(@PathVariable("skuId")Long skuId){
+
+        BigDecimal price = skuInfoService.get1010SkuPrice(skuId);
+        return Result.ok(price);
+    }
 }

@@ -26,7 +26,9 @@ public class CategoryRpcController {
      * @return
      */
     @GetMapping("/categorys/all")
-    public Result<List<CategoryVo>> getCategorys(){
+    public Result<List<CategoryVo>> getCategorys() throws InterruptedException {
+        System.out.println("业务处理中...");
+        Thread.sleep(2000);
         //查询所有三级分类
         List<CategoryVo> list = categoryBizService.getCategorys();
         return Result.ok(list);

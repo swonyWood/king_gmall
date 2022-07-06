@@ -21,7 +21,7 @@ public class IndexController {
     @Autowired
     CategoryFeignClient categoryFeignClient;
 
-    @GetMapping("/")
+    @GetMapping({"/","/index.html"})
     public String indexPage(Model model){
         Result<List<CategoryVo>> categorys = categoryFeignClient.getCategorys();
         List<CategoryVo> data = categorys.getData();

@@ -43,7 +43,7 @@ public interface SkuFeignClient {
      * @return
      */
     @GetMapping("/categoryview/{c3Id}")
-    public Result<CategoryView> getCategoryViews(@PathVariable("c3Id")Long c3Id);
+    Result<CategoryView> getCategoryViews(@PathVariable("c3Id")Long c3Id);
 
     /**
      * 根据skuId和spuId查询出当前商品spu定义的所有销售属性名和值以及标记出当前sku是哪一对组合
@@ -52,14 +52,14 @@ public interface SkuFeignClient {
      * @return
      */
     @GetMapping("/sku/saleattr/{skuId}/{spuId}")
-    public Result<List<SpuSaleAttr>> getSaleAttr(@PathVariable("skuId")Long skuId,
+    Result<List<SpuSaleAttr>> getSaleAttr(@PathVariable("skuId")Long skuId,
                                                  @PathVariable("spuId")Long spuId);
 
     /**
      * 查出当前sku对应的spu有多少sku,并每个sku的销售属性值组合,按照值组合位key,skuID为value,存到一个map中 ,再转为json
      */
     @GetMapping("/spu/skus/saleattrvalue/json/{spuId}")
-    public Result<String> getSpu2AllSkuSaleAttrAndValue(@PathVariable("spuId")Long spuId);
+    Result<String> getSpu2AllSkuSaleAttrAndValue(@PathVariable("spuId")Long spuId);
 
     /**
      * 查sku价格
@@ -67,5 +67,13 @@ public interface SkuFeignClient {
      * @return
      */
     @GetMapping("/sku/price/{skuId}")
-    public Result<BigDecimal> getSkuPrice(@PathVariable("skuId")Long skuId);
+    Result<BigDecimal> getSkuPrice(@PathVariable("skuId")Long skuId);
+
+    /**
+     * 实时查价
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/sku/price/shishi/{skuId}")
+    Result<BigDecimal> get1010SkuPrice(@PathVariable("skuId")Long skuId);
 }

@@ -22,22 +22,25 @@ public class RequestHeaderSetFeignInterceptor implements RequestInterceptor {
 //        HttpServletRequest req = CartController.threadLocal.get(Thread.currentThread());
         //1.先从Spring提供的RequestContextHolder中拿到当前线程的请求对象
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            //2.拿到当前请求对象
+            HttpServletRequest request = attributes.getRequest();
 
-        //2.拿到当前请求对象
-        HttpServletRequest request = attributes.getRequest();
+            //3.把原来的请求头放到模板对象
+            Enumeration<String> headerNames = request.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                //请求头名
+                String headerName = headerNames.nextElement();
+                //值
+                String headerValue = request.getHeader(headerName);
+                if ("UserTempId".equalsIgnoreCase(headerName)||"UserId".equalsIgnoreCase(headerName)) {
+                    template.header(headerName, headerValue);
+                }
 
-        //3.把原来的请求头放到模板对象
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            //请求头名
-            String headerName = headerNames.nextElement();
-            //值
-            String headerValue = request.getHeader(headerName);
-            if ("UserTempId".equalsIgnoreCase(headerName)||"UserId".equalsIgnoreCase(headerName)) {
-                template.header(headerName, headerValue);
             }
-
         }
+
+
 
     }
 }

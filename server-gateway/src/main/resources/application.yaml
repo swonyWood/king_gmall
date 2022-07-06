@@ -29,6 +29,11 @@ spring:
           predicates:
             - Path=/admin/product/**
 
+        - id: cart_route
+          uri: lb://service-cart
+          predicates:
+            - Path=/api/cart/**
+
         - id: activity_route
           uri: lb://service-activity
           predicates:

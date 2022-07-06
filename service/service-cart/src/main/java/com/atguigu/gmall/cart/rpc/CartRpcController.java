@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @RequestMapping("/rpc/inner/cart")
-public class CartController {
+public class CartRpcController {
 
 
     @Autowired
@@ -31,6 +31,19 @@ public class CartController {
 
         AddSuccessVo vo = cartService.addToCart(skuId, num);
         return Result.ok(vo);
+    }
+
+
+    /**
+     * 删除选中的商品
+     * @return
+     */
+    @GetMapping("/delete/checked")
+    public Result deleteChecked(){
+
+        cartService.deleteChecked();
+
+        return Result.ok();
     }
 
 }
