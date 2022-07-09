@@ -49,6 +49,9 @@ public class PaymentInfo extends BaseEntity {
 	@TableField("subject")
 	private String subject;
 
+	@TableField("user_id")
+	private Long userId;
+
 	@ApiModelProperty(value = "支付状态")
 	@TableField("payment_status")
 	private String paymentStatus;

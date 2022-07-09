@@ -47,6 +47,7 @@ app:
   auth:
     login-url:
       - /order/**
+      - /trade.html
     no-auth-url:
       - /rpc/inner/**
     login-page: http://passport.gmall.com/login.html

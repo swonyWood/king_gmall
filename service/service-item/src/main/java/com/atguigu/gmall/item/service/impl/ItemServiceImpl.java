@@ -9,7 +9,6 @@ import com.atguigu.gmall.common.constant.RedisConst;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.feign.product.SkuFeignClient;
 import com.atguigu.gmall.feign.search.SearchFeignClient;
-import com.atguigu.gmall.item.config.AppThreadPoolConfiguration;
 import com.atguigu.gmall.starter.cache.annotation.Cache;
 import com.atguigu.gmall.starter.cache.component.CacheService;
 import com.atguigu.gmall.model.product.SkuInfo;

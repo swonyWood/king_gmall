@@ -1,6 +1,7 @@
 package com.atguigu.gmall.model.order;
 
 import com.atguigu.gmall.model.activity.CouponInfo;
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -24,5 +25,8 @@ public class OrderTradeVo implements Serializable {
    //  使用优惠/抵用
    @ApiModelProperty(value = "订单优惠券列表")
    private List<CouponInfo> couponInfoList;
+
+   @TableField("user_id")
+   private Long userId;
 
 }

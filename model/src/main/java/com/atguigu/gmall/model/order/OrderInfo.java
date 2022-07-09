@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@ToString
 @Data
 @ApiModel(description = "订单信息")
 @TableName("order_info")
@@ -29,6 +31,7 @@ public class OrderInfo extends BaseEntity {
     @ApiModelProperty(value = "收货人")
     @TableField("consignee")
     private String consignee;
+
 
     @ApiModelProperty(value = "收件人电话")
     @TableField("consignee_tel")

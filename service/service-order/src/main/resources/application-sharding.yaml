@@ -1,0 +1,177 @@
+#读写分离+分库分表
+spring:
+  shardingsphere:
+    datasource:
+      names: ds-master-order-0,ds-s1-order-0,ds-s2-order-0,ds-master-order-1,ds-s1-order-1,ds-s2-order-1
+      ds-master-order-0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.200.100:3306/gmall_order_0?useSSL=false&characterEncoding=utf-8
+        username: root
+        password: root
+      ds-master-order-1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.200.100:3306/gmall_order_1?useSSL=false&characterEncoding=utf-8
+        username: root
+        password: root
+      ds-s1-order-0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.200.100:3307/gmall_order_0?useSSL=false&characterEncoding=utf-8
+        username: root
+        password: root
+      ds-s2-order-0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.200.100:3308/gmall_order_0?useSSL=false&characterEncoding=utf-8
+        username: root
+        password: root
+      ds-s1-order-1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.200.100:3307/gmall_order_1?useSSL=false&characterEncoding=utf-8
+        username: root
+        password: root
+      ds-s2-order-1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.200.100:3308/gmall_order_1?useSSL=false&characterEncoding=utf-8
+        username: root
+        password: root
+    rules:
+      #读写分离
+      readwrite-splitting:
+        data-sources:
+          rw-ds-order-0:
+            type: Static
+            props:
+              write-data-source-name: ds-master-order-0
+              read-data-source-names: ds-s1-order-0,ds-s2-order-0
+            load-balancer-name: round-lb
+
+          rw-ds-order-1:
+            type: Static
+            props:
+              write-data-source-name: ds-master-order-1
+              read-data-source-names: ds-s1-order-1,ds-s2-order-1
+            load-balancer-name: round-lb
+
+        load-balancers:
+          rw-ds-order-0:
+            type: ROUND_ROBIN
+      #配置数据分片规则
+      sharding:
+        tables:
+          #逻辑表
+          order_info:
+            #            ds-master-order-0.order_info_0,
+            #            ds-master-order-0.order_info_1,
+            #            ds-master-order-0.order_info_2
+            #            ds-master-order-1.order_info_0,
+            #            ds-master-order-1.order_info_1,
+            #            ds-master-order-1.order_info_2,
+            actual-data-nodes: ds-master-order-$->{0..1}.order_info_$->{0..2}
+            #分库策略
+            database-strategy:
+              standard:
+                #指定分片键
+                sharding-column: user_id
+                sharding-algorithm-name: moduser-2
+            #分表策略
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: moduser-3
+            #主键生成策略
+            key-generate-strategy:
+              column: id
+              key-generator-name: snow-alg
+
+          order_detail:
+            actual-data-nodes: ds-master-order-$->{0..1}.order_detail_$->{0..2}
+            #分库策略
+            database-strategy:
+              standard:
+                #指定分片键
+                sharding-column: user_id
+                sharding-algorithm-name: moduser-2
+            #分表策略
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: moduser-order-detail-3
+
+          order_status_log:
+            actual-data-nodes: ds-master-order-$->{0..1}.order_status_log_$->{0..2}
+            #分库策略
+            database-strategy:
+              standard:
+                #指定分片键
+                sharding-column: user_id
+                sharding-algorithm-name: moduser-2
+            #分表策略
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: moduser-order-status-log-3
+
+          payment_info:
+            actual-data-nodes: ds-master-order-$->{0..1}.payment_info_$->{0..2}
+            #分库策略
+            database-strategy:
+              standard:
+                #指定分片键
+                sharding-column: user_id
+                sharding-algorithm-name: moduser-2
+            #分表策略
+            table-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: moduser-payment-info-3
+
+
+        #指定id生成器
+        key-generators:
+          snow-alg:
+            type: SNOWFLAKE
+
+
+
+        #指定分片算法
+        sharding-algorithms:
+          moduser-2:
+            type: INLINE
+            props:
+              algorithm-expression: ds-master-order-$->{user_id%2}
+          moduser-3:
+            type: INLINE
+            props:
+              algorithm-expression: order_info_$->{user_id%3}
+          moduser-order-detail-3:
+            type: INLINE
+            props:
+              algorithm-expression: order_detail_$->{user_id%3}
+          moduser-order-status-log-3:
+            type: INLINE
+            props:
+              algorithm-expression: order_status_log_$->{user_id%3}
+          moduser-payment-info-3:
+            type: INLINE
+            props:
+              algorithm-expression: payment_info_$->{user_id%3}
+
+
+
+    props:
+      sql-show: true
+
+
+
+
+
+
+
+
+
+
