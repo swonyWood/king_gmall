@@ -1,5 +1,6 @@
 package com.atguigu.gmall.product;
 
+import com.atguigu.gmall.common.annotation.EnableHandleException;
 import com.atguigu.gmall.starter.cache.annotation.EnableCache;
 import com.atguigu.gmall.starter.cache.RedissonConfiguration;
 import com.atguigu.gmall.common.config.Swagger2Config;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @date 2022/6/20 19:34
  * @description
  */
+@EnableHandleException
 @EnableFeignClients(basePackages = "com.atguigu.gmall.feign.search")
 @EnableScheduling //开启定时调度
 @EnableTransactionManagement

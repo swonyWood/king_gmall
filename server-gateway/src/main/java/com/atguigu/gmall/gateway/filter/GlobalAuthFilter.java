@@ -14,6 +14,7 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -173,6 +174,22 @@ public class GlobalAuthFilter implements GlobalFilter {
         response.setStatusCode(HttpStatus.FOUND);
         //修改响应头
         response.getHeaders().set("Location", loginPage);
+
+        //清空登录信息
+        ResponseCookie cookie = ResponseCookie.from("token", "xx")
+                .maxAge(0)
+                .domain(".gmall.com")
+                .path("/")
+                .build();
+
+
+        ResponseCookie infoCookie = ResponseCookie.from("userInfo", "xx")
+                .maxAge(0)
+                .domain(".gmall.com")
+                .path("/")
+                .build();
+        response.addCookie(cookie);
+        response.addCookie(infoCookie);
 
         return response.setComplete();
     }

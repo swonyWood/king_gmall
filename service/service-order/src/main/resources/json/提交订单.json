@@ -1,0 +1,17 @@
+{
+  "consignee": "",
+  "consigneeTel": "",
+  "deliveryAddress": "",
+  "paymentWay": "ONLINE",
+  "orderComment": "",
+  "orderDetailList": [
+    {
+      "imgUrl": "http://192.168.200.100:9000/gmall/39faba17e1944a1291b0a19671fc2dc8_4.png",
+      "skuName": "诺基亚 NOKIA G50 5G 全网通 5000mAh电池高通骁龙 4800万超级夜景 6.82全面屏美颜拍照手机 6GB+128GB 海蓝1111",
+      "orderPrice": 999,
+      "skuNum": 4,
+      "stock": "0",
+      "skuId": 49
+    }
+  ]
+}

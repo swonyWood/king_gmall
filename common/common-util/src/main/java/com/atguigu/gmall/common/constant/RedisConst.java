@@ -15,4 +15,6 @@ public class RedisConst {
     public static final String CART_INFO_PREFIX = "cart:info:";
     public static final Integer CART_SIZE_LIMIT = 200;
     public static final String SKU_PRICE_CACHE_PREFIX = "sku:price:";
+    public static final String A_KEN_VALUE = "X";
+    public static final String TRADE_TOEKN_PREFIX = "trade:token:";
 }
