@@ -42,4 +42,17 @@ public interface OrderBizService {
      * @param order
      */
     OrderInfo saveOrder(String tradeNo, OrderSubmitVo order);
+
+    /**
+     * 关单,修改订单状态,日志记录
+     * @param orderId
+     * @param userId
+     */
+    void closeOrder(Long orderId, Long userId);
+    /**
+     * 获取指定订单和用户的订单信息
+     * @param id
+     * @return
+     */
+    OrderInfo getOrderInfoAndUserId(Long id);
 }

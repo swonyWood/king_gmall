@@ -15,4 +15,16 @@ public interface OrderInfoService extends IService<OrderInfo> {
      * @param order
      */
     void saveDetail(OrderInfo orderInfo, OrderSubmitVo order);
+
+    /**
+     * 修改订单状态
+     * @param orderId
+     * @param userId
+     * @param name
+     * @param name1
+     * @param expectStatus
+     */
+    void updateOrderStatus(Long orderId, Long userId, String name, String name1, String expectStatus);
+
+
 }

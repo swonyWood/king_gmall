@@ -5,9 +5,12 @@ import java.util.Date;
 import com.atguigu.gmall.common.util.AuthContextHolder;
 import com.atguigu.gmall.model.order.OrderDetail;
 import com.atguigu.gmall.model.order.OrderInfo;
+import com.atguigu.gmall.model.order.OrderStatusLog;
 import com.atguigu.gmall.model.vo.order.CartOrderDetailVo;
 import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
 import com.atguigu.gmall.order.service.OrderDetailService;
+import com.atguigu.gmall.order.service.OrderStatusLogService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gmall.order.service.OrderInfoService;
 import com.atguigu.gmall.order.mapper.OrderInfoMapper;
@@ -27,6 +30,12 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     @Autowired
     OrderDetailService orderDetailService;
+
+    @Autowired
+    OrderInfoMapper orderInfoMapper;
+
+    @Autowired
+    OrderStatusLogService orderStatusLogService;
 
     @Transactional
     @Override
@@ -64,6 +73,28 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderDetailService.saveBatch(orderDetails);
 
     }
+
+    @Transactional
+    @Override
+    public void updateOrderStatus(Long orderId, Long userId, String orderStatus, String processStatus, String expectStatus) {
+
+        Long l = orderInfoMapper.updateOrderStatus(orderId, userId, orderStatus, processStatus, expectStatus);
+
+        if (l>0) {
+            //修改数量不为0
+            //2.新增修改日志
+            OrderStatusLog log = new OrderStatusLog();
+            log.setOrderId(orderId);
+            log.setOrderStatus(orderStatus);
+            log.setOperateTime(new Date());
+            log.setUserId(userId);
+
+            orderStatusLogService.save(log);
+        }
+
+    }
+
+
 }
 
 

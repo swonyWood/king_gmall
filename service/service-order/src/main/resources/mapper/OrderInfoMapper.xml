@@ -41,4 +41,9 @@
         operate_time,activity_reduce_amount,coupon_amount,
         original_total_amount,feight_fee,refundable_time
     </sql>
+    <update id="updateOrderStatus">
+        update order_info set process_status=#{processStatus},order_status=#{orderId} where
+        id=#{orderId} and user_id=#{userId} and order_status=#{expectStatus}
+
+    </update>
 </mapper>

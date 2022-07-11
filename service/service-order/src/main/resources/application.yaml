@@ -10,6 +10,25 @@ spring:
     allow-bean-definition-overriding: true
   profiles:
     include: sharding
+
+  rabbitmq:
+    host: 192.168.200.100
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+    #关联方式,错误消息必须通知publisher
+    publisher-confirm-type: correlated
+    #发送成功返回true
+    publisher-returns: true
+    listener:
+      type: simple
+      simple:
+        acknowledge-mode: manual
+
+
+
+
 app:
   threadpool:
     core-pool-size: 4

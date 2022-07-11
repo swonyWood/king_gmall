@@ -1,6 +1,7 @@
 package com.atguigu.gmall.order.service.impl;
 import java.util.Date;
 
+import com.atguigu.gmall.common.constant.MqConst;
 import com.atguigu.gmall.common.util.AuthContextHolder;
 import com.atguigu.gmall.model.activity.CouponInfo;
 
@@ -27,16 +28,20 @@ import com.atguigu.gmall.model.enums.OrderStatus;
 import com.atguigu.gmall.model.enums.ProcessStatus;
 import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.model.order.OrderStatusLog;
+import com.atguigu.gmall.model.to.mq.OrderCreateMsg;
 import com.atguigu.gmall.model.user.UserAddress;
 import com.atguigu.gmall.model.vo.order.CartOrderDetailVo;
 import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
 import com.atguigu.gmall.model.vo.user.UserAuth;
+import com.atguigu.gmall.order.mapper.OrderInfoMapper;
 import com.atguigu.gmall.order.service.OrderInfoService;
 import com.atguigu.gmall.order.service.OrderStatusLogService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
 
 import com.atguigu.gmall.model.vo.order.OrderConfirmVo;
 import com.atguigu.gmall.order.service.OrderBizService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -78,6 +83,12 @@ public class OrderBizServiceImpl implements OrderBizService {
 
     @Autowired
     OrderStatusLogService orderStatusLogService;
+
+    @Autowired
+    RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    OrderInfoMapper orderInfoMapper;
 
     @Override
     public OrderConfirmVo getOrderComfirmData() {
@@ -228,9 +239,20 @@ public class OrderBizServiceImpl implements OrderBizService {
         //MQ--ok
         //异步定时+定时扫描--时效性
 
+        //6.发消息给MQ //orderId, userId,totalAmout,status
+        OrderCreateMsg msg = prepareOrderMsg(info);
+        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_ORDER_EVENT, MqConst.RK_ORDER_CREATE,JSONs.toStr(msg));
+
 
 
         return info.getId();
+    }
+
+    //准备订单创建的消息数据
+    private OrderCreateMsg prepareOrderMsg(OrderInfo info) {
+        UserAuth auth = AuthContextHolder.getUserAuth();
+        OrderCreateMsg msg = new OrderCreateMsg(info.getId(),auth.getUserId(),info.getTotalAmount(),info.getOrderStatus());
+        return msg;
     }
 
     //事务内reque.new--内部影响外部事务,外部事务不影响内部
@@ -254,6 +276,18 @@ public class OrderBizServiceImpl implements OrderBizService {
 
         return orderInfo;
     }
+
+    @Transactional
+    @Override
+    public void closeOrder(Long orderId, Long userId) {
+        ProcessStatus closeStatus = ProcessStatus.CLOSED;
+        //1.修改订单状态
+        orderInfoService.updateOrderStatus(orderId,userId,closeStatus.getOrderStatus().name(),
+                closeStatus.name(),ProcessStatus.UNPAID.name());
+
+
+    }
+
     //准备日志信息
     private OrderStatusLog prepareOrderStatusLog(OrderInfo orderInfo) {
 
@@ -352,6 +386,20 @@ public class OrderBizServiceImpl implements OrderBizService {
 
 
         return orderInfo;
+    }
+
+    @Override
+    public OrderInfo getOrderInfoAndUserId(Long id) {
+
+        Long userId = AuthContextHolder.getUserAuth().getUserId();
+        QueryWrapper<OrderInfo> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id",userId);
+        wrapper.eq("id",id);
+        List<OrderInfo> infos = orderInfoMapper.selectList(wrapper);
+        if (infos==null||infos.size() == 0) {
+            return null;
+        }
+        return infos.get(0);
     }
 }
 
