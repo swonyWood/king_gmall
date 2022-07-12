@@ -1,14 +1,12 @@
 package com.atguigu.gmall.order.service.impl;
-import java.util.Date;
+import java.util.*;
 
+import com.alibaba.fastjson.TypeReference;
 import com.atguigu.gmall.common.constant.MqConst;
 import com.atguigu.gmall.common.util.AuthContextHolder;
 import com.atguigu.gmall.model.activity.CouponInfo;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -26,14 +24,20 @@ import com.atguigu.gmall.feign.ware.WareFeignClient;
 import com.atguigu.gmall.model.cart.CartInfo;
 import com.atguigu.gmall.model.enums.OrderStatus;
 import com.atguigu.gmall.model.enums.ProcessStatus;
+import com.atguigu.gmall.model.order.OrderDetail;
 import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.model.order.OrderStatusLog;
 import com.atguigu.gmall.model.to.mq.OrderCreateMsg;
+import com.atguigu.gmall.model.to.mq.WareStockDetail;
 import com.atguigu.gmall.model.user.UserAddress;
 import com.atguigu.gmall.model.vo.order.CartOrderDetailVo;
 import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
 import com.atguigu.gmall.model.vo.user.UserAuth;
+import com.atguigu.gmall.model.vo.ware.OrderSpiltVo;
+import com.atguigu.gmall.model.vo.ware.OrderSplitRespVo;
+import com.atguigu.gmall.model.vo.ware.WareFenBuVo;
 import com.atguigu.gmall.order.mapper.OrderInfoMapper;
+import com.atguigu.gmall.order.service.OrderDetailService;
 import com.atguigu.gmall.order.service.OrderInfoService;
 import com.atguigu.gmall.order.service.OrderStatusLogService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -56,6 +60,9 @@ import org.springframework.web.context.request.RequestContextHolder;
  */
 @Service
 public class OrderBizServiceImpl implements OrderBizService {
+
+    @Autowired
+    OrderDetailService orderDetailService;
 
     @Autowired
     OrderBizService orderBizService;
@@ -400,6 +407,143 @@ public class OrderBizServiceImpl implements OrderBizService {
             return null;
         }
         return infos.get(0);
+    }
+
+    @Transactional
+    @Override
+    public List<OrderSplitRespVo> splitOrder(OrderSpiltVo vo) {
+        List<OrderSplitRespVo> result = new ArrayList<>();
+        //1.查询当前订单以及详情
+        OrderInfo orderInfo = orderInfoService.getOrderInfoAndDetails(Long.parseLong(vo.getOrderId()),
+                Long.parseLong(vo.getUserId()));
+
+        //2、按照库存分布拆分出新单
+        String skuMapJson = vo.getWareSkuMap();
+        //3、得到库存分布信息
+        List<WareFenBuVo> fenBuVos = JSONs.toObj(skuMapJson, new TypeReference<List<WareFenBuVo>>() {
+        });
+
+        //4、按照仓库拆单
+        for (WareFenBuVo buVo : fenBuVos) {
+            //保存子订单
+            OrderSplitRespVo order = saveChildOrder(orderInfo, buVo);
+            result.add(order);
+        }
+
+        //5、父单改为已拆分状态
+        ProcessStatus split = ProcessStatus.SPLIT;
+        //也会推进日志
+        orderInfoService.updateOrderStatus(orderInfo.getId(),
+                orderInfo.getUserId(),
+                split.getOrderStatus().name(),
+                split.name(),
+                ProcessStatus.PAID.name());
+
+
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public OrderSplitRespVo saveChildOrder(OrderInfo orderInfo, WareFenBuVo buVo) {
+        //1、准备子订单
+        OrderInfo childOrder = prepareChildOrder(orderInfo,buVo);
+
+        //2、保存子订单 order_info
+        orderInfoService.save(childOrder);
+
+        //3、保存子订单详情
+        List<OrderDetail> detailList =
+                childOrder.getOrderDetailList().stream().map(item->{
+                    item.setOrderId(childOrder.getId()); //设置号子单id即可
+                    return item;
+                }).collect(Collectors.toList());
+        orderDetailService.saveBatch(detailList);
+
+
+        //4、准备返回
+        return prepareOrderSplitRespVo(childOrder);
+
+    }
+
+    private OrderSplitRespVo prepareOrderSplitRespVo(OrderInfo childOrder) {
+        OrderSplitRespVo respVo = new OrderSplitRespVo();
+        respVo.setOrderId(childOrder.getId()+"");
+        respVo.setConsignee(childOrder.getConsignee());
+        respVo.setConsigneeTel(childOrder.getConsigneeTel());
+        respVo.setOrderComment(childOrder.getOrderComment());
+        respVo.setOrderBody(childOrder.getTradeBody());
+        respVo.setDeliveryAddress(childOrder.getDeliveryAddress());
+        respVo.setPaymentWay("2");
+        respVo.setWareId(childOrder.getWareId());
+
+        //子单负责的所有商品详情
+        //List<WareStockDetail>
+        List<WareStockDetail> details = childOrder.getOrderDetailList().stream()
+                .map(item -> new WareStockDetail(item.getSkuId(), item.getSkuNum(), item.getSkuName()))
+                .collect(Collectors.toList());
+        respVo.setDetails(details);
+
+        return respVo;
+    }
+
+    private OrderInfo prepareChildOrder(OrderInfo orderInfo, WareFenBuVo buVo) {
+        OrderInfo childOrder = new OrderInfo();
+
+        //设置订单详情；
+        Set<String> skuIds = buVo.getSkuIds().stream().collect(Collectors.toSet());
+        //获取总单中子订单负责的商品
+        List<OrderDetail> orderDetails = orderInfo.getOrderDetailList().stream()
+                .filter(item -> skuIds.contains(item.getSkuId().toString()))
+                .collect(Collectors.toList());
+        //得到当前子订单负责的商品
+        childOrder.setOrderDetailList(orderDetails);
+
+        childOrder.setConsignee(orderInfo.getConsignee());
+        childOrder.setConsigneeTel(orderInfo.getConsigneeTel());
+
+        //拆单后包含的商品的总额
+        BigDecimal total = orderDetails.stream()
+                .map(item -> item.getOrderPrice().multiply(new BigDecimal(item.getSkuNum())))
+                .reduce((o1, o2) -> o1.add(o2))
+                .get();
+        childOrder.setTotalAmount(total);
+
+
+        //每个子单自己购买的商品的名字
+        childOrder.setTradeBody(orderDetails.get(0).getSkuName());
+        //每个子单自己购买的商品的图片
+        childOrder.setImgUrl(orderDetails.get(0).getImgUrl());
+        //子单拆分的时间
+        childOrder.setCreateTime(new Date());
+
+        //子单涉及到的商品原始总额
+        childOrder.setOriginalTotalAmount(new BigDecimal("0"));
+        //子单每个商品自己的优惠额
+        childOrder.setActivityReduceAmount(new BigDecimal("0"));
+        childOrder.setCouponAmount(new BigDecimal("0"));
+
+        //每个子单最终配送以后会有自己的物流号
+        childOrder.setTrackingNo("");
+
+        childOrder.setOperateTime(new Date());
+
+        childOrder.setOrderStatus(orderInfo.getOrderStatus());
+        childOrder.setUserId(orderInfo.getUserId());
+        childOrder.setPaymentWay(orderInfo.getPaymentWay());
+        childOrder.setDeliveryAddress(orderInfo.getDeliveryAddress());
+        childOrder.setOrderComment(orderInfo.getOrderComment());
+        childOrder.setOutTradeNo(orderInfo.getOutTradeNo());
+        childOrder.setExpireTime(orderInfo.getExpireTime());
+        childOrder.setProcessStatus(orderInfo.getProcessStatus());
+        childOrder.setParentOrderId(orderInfo.getParentOrderId());
+        childOrder.setWareId(buVo.getWareId());
+        childOrder.setRefundableTime(orderInfo.getRefundableTime());
+        childOrder.setFeightFee(new BigDecimal("0"));
+
+
+
+        return childOrder;
     }
 }
 

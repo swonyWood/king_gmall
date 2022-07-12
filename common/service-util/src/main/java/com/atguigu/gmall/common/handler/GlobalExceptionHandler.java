@@ -2,6 +2,7 @@ package com.atguigu.gmall.common.handler;
 
 import com.atguigu.gmall.common.execption.GmallException;
 import com.atguigu.gmall.common.result.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * 处理全局异常
  * 1.所有的业务异常都是new GmallException
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -34,7 +36,7 @@ public class GlobalExceptionHandler {
         result.setCode(e.getCode());
         result.setMessage(e.getMessage());
         result.setData("");
-
+        log.error("全局异常:{}",e.getStackTrace());
         return result;
     }
 
@@ -43,6 +45,8 @@ public class GlobalExceptionHandler {
     public Result handleBizException(Exception e){
         Result<Object> fail = Result.fail();
         fail.setMessage(e.getMessage());
+        log.error("全局异常:{}",e.getStackTrace());
+
         return fail;
     }
 }

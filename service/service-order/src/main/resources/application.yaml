@@ -25,6 +25,7 @@ spring:
       type: simple
       simple:
         acknowledge-mode: manual
+        prefetch: 12 #每次12个处理完,再拿12个
 
 
 

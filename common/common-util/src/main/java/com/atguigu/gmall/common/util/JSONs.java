@@ -6,14 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
-/**
- * @author Kingstu
- * @date 2022/6/25 15:50
- */
+
 @Slf4j
 public class JSONs {
-    static ObjectMapper objectMapper = new ObjectMapper();
-
+    static ObjectMapper mapper = new ObjectMapper();
     /**
      * 对象转json
      * @param o
@@ -21,45 +17,41 @@ public class JSONs {
      */
     public static String toStr(Object o){
         try {
-            return objectMapper.writeValueAsString(o);
+            return mapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return "";
     }
 
-    /**
-     * 一般类型转换
-     * @param str
-     * @param ref
-     * @param <T>
-     * @return
-     */
-    public static<T> T toObj(String str, Class<T> ref){
-        if (StringUtils.isEmpty(str)) {
+    public static<T> T toObj(String json, Class<T> ref){
+        if(StringUtils.isEmpty(json)){
             return null;
         }
+
         try {
-            T t = objectMapper.readValue(str, ref);
-            return t;
+            T value = mapper.readValue(json, ref);
+            return value;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return null;
     }
+
+
     /**
-     * 复杂泛型的转化
-     * @param str
+     *
+     * @param json
      * @param ref
      * @param <T>
      * @return
      */
-    public static<T> T toObj(String str, TypeReference<T> ref){
+    public static<T> T toObj(String json, TypeReference<T> ref) {
         T t = null;
         try {
-            t = objectMapper.readValue(str, ref);
+            t = mapper.readValue(json, ref);
         } catch (JsonProcessingException e) {
-            log.error("json转对象异常: {}",e);
+            log.error("json转换对象异常：{}",e);
         }
         return t;
     }

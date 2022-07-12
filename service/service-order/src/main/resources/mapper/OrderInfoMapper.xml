@@ -46,4 +46,38 @@
         id=#{orderId} and user_id=#{userId} and order_status=#{expectStatus}
 
     </update>
+    <update id="updateOrderStatusInExpects">
+        update order_info set process_status=#{processStatus},order_status=#{orderId} where
+        id=#{id} and user_id=#{userId} and order_status in (
+        <foreach collection="expectStatus" item="curStatus" separator=",">
+            #{curStatus}
+        </foreach>
+        )
+    </update>
+    <resultMap id="OrderInfoResultMap" type="com.atguigu.gmall.model.order.OrderInfo" autoMapping="true">
+        <id column="id" property="id"></id>
+        <collection property="orderDetailList" ofType="com.atguigu.gmall.model.order.OrderDetail"
+                    autoMapping="true">
+            <id property="id" column="did"></id>
+        </collection>
+    </resultMap>
+
+    <select id="getOrderInfoAndDetails" resultMap="OrderInfoResultMap">
+        select oi.*,
+               od.id did,
+               od.order_id,
+               od.sku_id,
+               od.sku_name,
+               od.img_url,
+               od.order_price,
+               od.sku_num,
+               od.create_time,
+               od.split_total_amount,
+               od.split_activity_amount,
+               od.split_coupon_amount
+        from order_info oi
+                 left join order_detail od on od.order_id = oi.id and od.user_id = oi.user_id
+        where oi.id = #{orderId}
+          and oi.user_id = #{userId}
+    </select>
 </mapper>

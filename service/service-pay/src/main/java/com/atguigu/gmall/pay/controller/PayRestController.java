@@ -1,5 +1,6 @@
 package com.atguigu.gmall.pay.controller;
 
+import com.alipay.api.AlipayApiException;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.pay.service.PayService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class PayRestController {
      * @return
      */
     @GetMapping(value = "/submit/{orderId}",produces = "text/html")
-    public String getPayPage(@PathVariable("orderId") Long orderId){
+    public String getPayPage(@PathVariable("orderId") Long orderId) throws AlipayApiException {
 
         String html = payService.generatePayPage(orderId);
 

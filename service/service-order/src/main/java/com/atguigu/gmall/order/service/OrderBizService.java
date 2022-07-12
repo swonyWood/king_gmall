@@ -3,6 +3,11 @@ package com.atguigu.gmall.order.service;
 import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.model.vo.order.OrderConfirmVo;
 import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
+import com.atguigu.gmall.model.vo.ware.OrderSpiltVo;
+import com.atguigu.gmall.model.vo.ware.OrderSplitRespVo;
+import com.atguigu.gmall.model.vo.ware.WareFenBuVo;
+
+import java.util.List;
 
 /**
  * @author Kingstu
@@ -55,4 +60,20 @@ public interface OrderBizService {
      * @return
      */
     OrderInfo getOrderInfoAndUserId(Long id);
+
+    /**
+     * 拆单
+     * @param vo
+     * @return
+     */
+    List<OrderSplitRespVo> splitOrder(OrderSpiltVo vo);
+
+    /**
+     * 保存子订单
+     * @param orderInfo
+     * @param buVo
+     * @return
+     */
+    OrderSplitRespVo saveChildOrder(OrderInfo orderInfo, WareFenBuVo buVo);
+
 }

@@ -25,4 +25,7 @@
         sku_num,create_time,split_total_amount,
         split_activity_amount,split_coupon_amount
     </sql>
+    <select id="getOrderDetailsByOrderIdAndUserId" resultType="com.atguigu.gmall.model.order.OrderDetail">
+        select * from order_detail where order_id=#{id} and user_id=#{userId}
+    </select>
 </mapper>

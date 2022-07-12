@@ -4,7 +4,10 @@ import com.atguigu.gmall.model.order.OrderDetail;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gmall.order.service.OrderDetailService;
 import com.atguigu.gmall.order.mapper.OrderDetailMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  *
@@ -13,6 +16,14 @@ import org.springframework.stereotype.Service;
 public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, OrderDetail>
     implements OrderDetailService{
 
+
+    @Autowired
+    OrderDetailMapper orderDetailMapper;
+
+    @Override
+    public List<OrderDetail> getOrderDetailsByOrderIdAndUserId(Long id, Long userId) {
+        return orderDetailMapper.getOrderDetailsByOrderIdAndUserId(id,userId);
+    }
 }
 
 

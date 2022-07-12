@@ -42,7 +42,7 @@ spring:
         - id: pay_route
           uri: lb://service-pay
           predicates:
-            - Path=/api/payment/**
+            - Path=/api/payment/**,/rpcapi/payment/**
 
         - id: activity_route
           uri: lb://service-activity

@@ -1,4 +1,4 @@
-package com.atguigu.gmall.pay.config;
+package com.atguigu.gmall.pay.config.pay;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

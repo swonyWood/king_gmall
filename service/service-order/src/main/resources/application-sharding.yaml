@@ -160,6 +160,8 @@ spring:
             type: INLINE
             props:
               algorithm-expression: payment_info_$->{user_id%3}
+        binding-tables:
+          - order_info,order_detail
 
 
 
