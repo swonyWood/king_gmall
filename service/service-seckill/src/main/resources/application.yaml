@@ -1,0 +1,29 @@
+server:
+  port: 16000
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.200.100:3306/gmall_activity?useSSL=false&characterEncoding=utf-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+
+  redis:
+    host: 192.168.200.100
+    port: 6379
+    password: "!king123@"
+
+  rabbitmq:
+    host: 192.168.200.100
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+    #关联方式,错误消息必须通知publisher
+    publisher-confirm-type: correlated
+    #发送成功返回true
+    publisher-returns: true
+    listener:
+      type: simple
+      simple:
+        acknowledge-mode: manual
+        prefetch: 12 #每次12个处理完,再拿12个

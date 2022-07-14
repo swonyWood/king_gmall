@@ -10,11 +10,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * @author Kingstu
  * @date 2022/7/8 13:33
  */
+@EnableTransactionManagement
 @Import(AppMybatisPlusConfig.class)
 @EnableHandleException
 @EnableFeignInterceptor

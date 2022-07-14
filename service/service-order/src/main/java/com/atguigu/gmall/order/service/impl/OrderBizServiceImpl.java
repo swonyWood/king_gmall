@@ -1,7 +1,7 @@
 package com.atguigu.gmall.order.service.impl;
 import java.util.*;
 
-import com.alibaba.fastjson.TypeReference;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.atguigu.gmall.common.constant.MqConst;
 import com.atguigu.gmall.common.util.AuthContextHolder;
 import com.atguigu.gmall.model.activity.CouponInfo;

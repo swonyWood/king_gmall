@@ -26,4 +26,7 @@ public class MqConst {
     public static final String EXCHANGE_WARE_SYSTEM = "exchange.direct.ware.stock";
     public static final String RK_WARE_STOCK = "ware.stock";
     public static final String QUEUE_WARE_ORDER = "queue.ware.order";
+    public static final String EXCHANGE_SECKILL_EVENT = "seckill-event-exchange";
+    public static final String QUEUEU_SECKILL_QUEUE = "seckill-queue-queue";
+    public static final String RK_SECKILL_QUEUE = "seckill.queue";
 }

@@ -17,4 +17,7 @@ public class RedisConst {
     public static final String SKU_PRICE_CACHE_PREFIX = "sku:price:";
     public static final String A_KEN_VALUE = "X";
     public static final String TRADE_TOEKN_PREFIX = "trade:token:";
+    public static final String SECKILL_GOODS_CACHE_PREFIX = "seckill:goods:";
+    public static final String SECKILL_CODE_PREFIX = "seckill:code:";
+    public static final String SECKILL_ORDER_PREFIX = "seckill:order:";
 }

@@ -1,12 +1,12 @@
 package com.atguigu.gmall.order.listener;
 
-import com.alibaba.fastjson.TypeReference;
 import com.atguigu.gmall.common.constant.MqConst;
 import com.atguigu.gmall.common.util.JSONs;
 import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.order.service.OrderBizService;
 import com.atguigu.gmall.order.service.OrderInfoService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;

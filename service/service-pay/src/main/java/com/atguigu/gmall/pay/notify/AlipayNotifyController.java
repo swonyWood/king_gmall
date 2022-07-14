@@ -37,8 +37,9 @@ public class AlipayNotifyController {
      * 支付宝只要发现某个单支付成功,就会给商家指定地址发消息
      * @return
      */
-    @PostMapping("/notify/success")
-//    @RequestMapping("/notify/success")
+//    @PostMapping("/notify/success")
+    @RequestMapping("/notify/success")
+//    public String paySuccessNotify() throws AlipayApiException {
     public String paySuccessNotify(@RequestParam Map<String,String> params) throws AlipayApiException {
         //收到消息,修改支付宝状态
         log.info("支付宝异步通知抵达: {}", JSONs.toStr(params));
@@ -55,4 +56,5 @@ public class AlipayNotifyController {
         }
         return "error";
     }
+
 }
