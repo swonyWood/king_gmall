@@ -1,8 +1,12 @@
 package com.atguigu.gmall.front.controller;
 
 import com.atguigu.gmall.common.result.Result;
+import com.atguigu.gmall.feign.order.OrderFeignClient;
 import com.atguigu.gmall.feign.seckill.SeckillFeignClient;
+import com.atguigu.gmall.feign.user.UserFeignClient;
 import com.atguigu.gmall.model.activity.SeckillGoods;
+import com.atguigu.gmall.model.order.OrderInfo;
+import com.atguigu.gmall.model.user.UserAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +25,12 @@ public class SeckillController {
 
     @Autowired
     SeckillFeignClient seckillFeignClient;
+
+    @Autowired
+    OrderFeignClient orderFeignClient;
+
+    @Autowired
+    UserFeignClient userFeignClient;
 
 
     /**
@@ -70,6 +80,29 @@ public class SeckillController {
         model.addAttribute("skuIdStr",code);
 
         return "seckill/queue";
+    }
+
+
+    /**
+     * 去下单页
+     * @return
+     */
+    @GetMapping("/seckill/trade.html")
+    public String seckillTrade(Model model,
+                               @RequestParam("code") String code,
+                               @RequestParam("skuId") Long skuId){
+
+        //找秒杀服务
+        Result<OrderInfo> result = seckillFeignClient.getSeckillOrder(code, skuId);
+        OrderInfo data = result.getData();
+        model.addAttribute("detailArrayList",data.getOrderDetailList());
+        model.addAttribute("totalNum","1");
+        model.addAttribute("totalAmount",data.getTotalAmount());
+
+        Result<List<UserAddress>> userAddress = userFeignClient.getUserAddress();
+        model.addAttribute("userAddressList",userAddress.getData());
+
+        return "seckill/trade";
     }
 
 }

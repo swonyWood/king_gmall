@@ -2,6 +2,8 @@ package com.atguigu.gmall.seckill.controller;
 
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.common.result.ResultCodeEnum;
+import com.atguigu.gmall.feign.order.OrderFeignClient;
+import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.seckill.service.SeckillBizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,8 @@ public class SeckillRestController {
 
     @Autowired
     SeckillBizService seckillBizService;
+
+
 
     /**
      * 生成秒杀码
@@ -61,6 +65,21 @@ public class SeckillRestController {
         ResultCodeEnum status = seckillBizService.checkOrderStatus(skuId);
         return Result.build("", status);
     }
+
+
+    /**
+     * 保存秒杀单
+     * @param orderInfo
+     * @return
+     */
+    @PostMapping("/auth/submitOrder")
+    public Result submitOrder(@RequestBody OrderInfo orderInfo){
+
+
+        Long orderId = seckillBizService.saveSeckillOrder(orderInfo);
+        return Result.ok(orderId+"");
+    }
+
 
 
 }

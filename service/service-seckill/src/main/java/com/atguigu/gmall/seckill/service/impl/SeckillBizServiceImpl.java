@@ -2,6 +2,7 @@ package com.atguigu.gmall.seckill.service.impl;
 import java.math.BigDecimal;
 
 import com.atguigu.gmall.common.result.Result;
+import com.atguigu.gmall.feign.order.OrderFeignClient;
 import com.atguigu.gmall.model.enums.ProcessStatus;
 import com.atguigu.gmall.model.order.OrderDetail;
 import com.google.common.collect.Lists;
@@ -53,6 +54,8 @@ public class SeckillBizServiceImpl implements SeckillBizService {
     @Autowired
     StringRedisTemplate redisTemplate;
 
+    @Autowired
+    OrderFeignClient orderFeignClient;
 
     @Autowired
     RabbitTemplate rabbitTemplate;
@@ -120,8 +123,10 @@ public class SeckillBizServiceImpl implements SeckillBizService {
         }
 
 
-        //校验秒杀码
-        if (!redisTemplate.hasKey(RedisConst.SECKILL_CODE_PREFIX+code)) {
+        //校验秒杀码,再次生成--防止横向越权
+        Long userId = AuthContextHolder.getUserAuth().getUserId();
+        String generateCode = MD5.encrypt(DateUtil.formatDate(new Date()) + userId + skuId);
+        if (!generateCode.equals(code) || !redisTemplate.hasKey(RedisConst.SECKILL_CODE_PREFIX+code)) {
             throw new GmallException(ResultCodeEnum.SECKILL_ILLEGAL);
         }
 
@@ -140,7 +145,6 @@ public class SeckillBizServiceImpl implements SeckillBizService {
 
         goods.setStockCount(goods.getStockCount()-1);
         //下单,发消息
-        Long userId = AuthContextHolder.getUserAuth().getUserId();
 
         SeckillQueueMsg msg = new SeckillQueueMsg(userId,skuId,code);
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_SECKILL_EVENT, MqConst.RK_SECKILL_QUEUE,JSONs.toStr(msg));
@@ -220,6 +224,34 @@ public class SeckillBizServiceImpl implements SeckillBizService {
 
 
         return ResultCodeEnum.SECKILL_FAIL;
+    }
+
+    @Override
+    public Long saveSeckillOrder(OrderInfo orderInfo) {
+
+        //2.更新秒杀单id
+        Long userId = AuthContextHolder.getUserAuth().getUserId();
+        Long skuId = orderInfo.getOrderDetailList().get(0).getSkuId();
+        String seckillCode = MD5.encrypt(DateUtil.formatDate(new Date()) + userId + skuId);
+
+        String json = redisTemplate.opsForValue().get(RedisConst.SECKILL_ORDER_PREFIX + seckillCode);
+        OrderInfo redisObj = JSONs.toObj(json, OrderInfo.class);
+
+        redisObj.setConsignee(orderInfo.getConsignee());
+        redisObj.setConsigneeTel(orderInfo.getConsigneeTel());
+        redisObj.setDeliveryAddress(orderInfo.getDeliveryAddress());
+
+        //从redis拿到订单,把前端提交的收货地址补充一下
+        //1.远程调用保存秒杀单
+        Result<Long> result = orderFeignClient.saveSeckillOrder(redisObj);
+
+
+        redisObj.setId(result.getData());
+        redisTemplate.opsForValue().set(RedisConst.SECKILL_ORDER_PREFIX+seckillCode,JSONs.toStr(redisObj));
+
+
+
+        return result.getData();
     }
 
 

@@ -46,7 +46,7 @@ public class OrderPayedListener {
            //不批量处理回复
             channel.basicAck(properties.getDeliveryTag(), false);
         }catch (Exception e) {
-            log.info("消息消费失败,返回队列: {}",map);
+            log.info("消息消费失败,返回队列: {},异常原因:{}",map,e);
             channel.basicNack(properties.getDeliveryTag(), false, true);
 
         }

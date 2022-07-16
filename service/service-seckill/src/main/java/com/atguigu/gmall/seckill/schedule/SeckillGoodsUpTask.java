@@ -28,8 +28,8 @@ public class SeckillGoodsUpTask {
     SeckillBizService seckillBizService;
 
     //每天22.30上架秒杀商品
-    @Scheduled(cron = "0 30 22 * * ?")
-//    @Scheduled(cron = "0 * * * * ?")
+//    @Scheduled(cron = "0 30 22 * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     public void seckillGoodsUp(){
         log.info("定时任务正在上架第二天参与秒杀的所有商品");
 

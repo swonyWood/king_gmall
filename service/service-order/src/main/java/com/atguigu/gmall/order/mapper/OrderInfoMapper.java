@@ -20,9 +20,9 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
 
     long updateOrderStatusInExpects(@Param("id") Long id,
                                     @Param("userId") long userId,
-                                    @Param("name") String name,
-                                    @Param("name1") String name1,
-                                    @Param("asList") List<String> expectStatus);
+                                    @Param("orderStatus") String orderStatus,
+                                    @Param("processStatus") String processStatus,
+                                    @Param("expectStatus") List<String> expectStatus);
 
     /**
      * 查询指定订单详情

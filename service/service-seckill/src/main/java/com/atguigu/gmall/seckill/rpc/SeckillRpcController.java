@@ -2,12 +2,11 @@ package com.atguigu.gmall.seckill.rpc;
 
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.model.activity.SeckillGoods;
+import com.atguigu.gmall.model.order.OrderInfo;
+import com.atguigu.gmall.seckill.service.SeckillBizService;
 import com.atguigu.gmall.seckill.service.SeckillGoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +20,9 @@ public class SeckillRpcController {
 
     @Autowired
     SeckillGoodsService seckillGoodsService;
+
+    @Autowired
+    SeckillBizService seckillBizService;
 
     /**
      * 获取当天参与秒杀的所有商品
@@ -45,5 +47,16 @@ public class SeckillRpcController {
         SeckillGoods goods = seckillGoodsService.getSeckillGood(skuId);
         return Result.ok(goods);
 
+    }
+
+    /**
+     * 获取某个秒杀单详情
+     */
+    @GetMapping("/order/{skuId}/{code}")
+    public Result<OrderInfo> getSeckillOrder(@PathVariable("code")String code,
+                                             @PathVariable("skuId")Long skuId){
+
+        OrderInfo info = seckillGoodsService.getSeckillOrder(code,skuId);
+        return Result.ok(info);
     }
 }

@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gmall.order.service.OrderInfoService;
 import com.atguigu.gmall.order.mapper.OrderInfoMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 /**
  *
  */
+@Slf4j
 @Service
 public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo>
     implements OrderInfoService{
@@ -122,11 +124,18 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         QueryWrapper<OrderInfo> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", userId);
         wrapper.eq("out_trade_no", map.get("out_trade_no"));
+
         OrderInfo orderInfo = orderInfoMapper.selectOne(wrapper);
+
+        if (orderInfo==null) {
+            log.error("用户: {},订单交易号: {}支付状态异常",userId,orderInfo.getOutTradeNo());
+            return;
+        }
 
         //3.修改此订单的状态
         ProcessStatus paid = ProcessStatus.PAID;
-        long status = orderInfoMapper.updateOrderStatusInExpects(orderInfo.getId(),
+        long status = orderInfoMapper.updateOrderStatusInExpects(
+                orderInfo.getId(),
                 userId,
                 paid.getOrderStatus().name(),
                 paid.name(),
@@ -158,6 +167,22 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
 
         return orderInfoMapper.getOrderInfoAndDetails(orderId,userId);
+    }
+
+    @Transactional
+    @Override
+    public Long saveScekillOrder(OrderInfo orderInfo) {
+
+
+        int insert = orderInfoMapper.insert(orderInfo);
+
+        orderInfo.getOrderDetailList().forEach(item->{
+
+            item.setOrderId(orderInfo.getId());
+            orderDetailService.save(item);
+        });
+
+        return orderInfo.getId();
     }
 
     private WareStockMsg pripareWareMsg(OrderInfo orderInfo) {

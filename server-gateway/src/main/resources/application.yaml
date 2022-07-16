@@ -57,7 +57,7 @@ spring:
         - id: front_route
           uri: lb://web-front
           predicates:
-              - Host=**.gmall.com
+            - Host=**.gmall.com
 app:
   auth:
     login-url:
@@ -65,6 +65,7 @@ app:
       - /trade.html
       - /**/auth/**
       - /api/payment/**
+      - /**/seckill/queue/**
     no-auth-url:
       - /rpc/inner/**
     login-page: http://passport.gmall.com/login.html

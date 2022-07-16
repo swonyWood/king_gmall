@@ -12,6 +12,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author Kingstu
  * @date 2022/7/13 13:27
  */
+@EnableFeignClients(basePackages = "com.atguigu.gmall.feign.order")
+@EnableFeignInterceptor
 @EnableRabbit
 @EnableHandleException
 @MapperScan(basePackages = "com.atguigu.gmall.seckill.mapper")

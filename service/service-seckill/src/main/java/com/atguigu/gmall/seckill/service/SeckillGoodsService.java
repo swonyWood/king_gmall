@@ -1,6 +1,7 @@
 package com.atguigu.gmall.seckill.service;
 
 import com.atguigu.gmall.model.activity.SeckillGoods;
+import com.atguigu.gmall.model.order.OrderInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -44,4 +45,12 @@ public interface SeckillGoodsService extends IService<SeckillGoods> {
      * @return
      */
     long deduceSeckillStockCount(Long skuId, int num);
+
+    /**
+     * 获取某个秒杀单详情
+     * @param code
+     * @param
+     * @return
+     */
+    OrderInfo getSeckillOrder(String code, Long skuId);
 }

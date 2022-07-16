@@ -2,6 +2,7 @@ package com.atguigu.gmall.seckill.service;
 
 import com.atguigu.gmall.common.result.ResultCodeEnum;
 import com.atguigu.gmall.model.activity.SeckillGoods;
+import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.model.to.mq.SeckillQueueMsg;
 
 import java.util.List;
@@ -45,4 +46,11 @@ public interface SeckillBizService {
      * @return
      */
     ResultCodeEnum checkOrderStatus(Long skuId);
+
+    /**
+     * 保存秒杀单
+     * @param orderInfo
+     * @return
+     */
+    Long saveSeckillOrder(OrderInfo orderInfo);
 }

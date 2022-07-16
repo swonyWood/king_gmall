@@ -1,0 +1,24 @@
+{
+  "consignee": "atguigu666",
+  "consigneeTel": "13833456789",
+  "deliveryAddress": "北京市大兴区",
+  "paymentWay": "ONLINE",
+  "orderComment": "",
+  "orderDetailList": [
+    {
+      "id": null,
+      "orderId": null,
+      "skuId": 46,
+      "skuName": "荣耀V30 PRO PLUS 5G双模 麒麟990 5GSOC芯片 双快充 游戏手机 幻夜星河 全网通(8GB 256GB)",
+      "imgUrl": "http://192.168.200.100:9000/gmall/28f0e3bda6dd4500930b3290387ebf37_3.png",
+      "orderPrice": 50,
+      "skuNum": 1,
+      "userId": 3,
+      "hasStock": "1",
+      "createTime": "2022-07-15 11:46:12",
+      "splitTotalAmount": 50,
+      "splitActivityAmount": null,
+      "splitCouponAmount": null
+    }
+  ]
+}

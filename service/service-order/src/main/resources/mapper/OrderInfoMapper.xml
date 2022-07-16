@@ -47,7 +47,7 @@
 
     </update>
     <update id="updateOrderStatusInExpects">
-        update order_info set process_status=#{processStatus},order_status=#{orderId} where
+        update order_info set process_status=#{processStatus},order_status=#{orderStatus} where
         id=#{id} and user_id=#{userId} and order_status in (
         <foreach collection="expectStatus" item="curStatus" separator=",">
             #{curStatus}
